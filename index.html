@@ -16,7 +16,7 @@
       background: #000000;
       height: 100vh;
       width: 100vw;
-      font-family: 'Segoe UI', Arial, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
     /* Pantallas overlay */
@@ -34,7 +34,7 @@
       z-index: 20;
       transition: opacity 0.8s ease;
       text-align: center;
-      padding: 2rem;
+      padding: 1.5rem;
       box-sizing: border-box;
     }
     .overlay.hidden {
@@ -43,31 +43,32 @@
       z-index: 0;
     }
     .overlay h1 {
-      font-size: 3.2rem;
+      font-size: clamp(2rem, 6vw, 3.5rem);
       text-shadow: 0 0 20px #ff4d94, 0 0 40px #ff1a66;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.3rem;
       letter-spacing: 2px;
+      line-height: 1.2;
     }
     .overlay h2 {
-      font-size: 2.2rem;
+      font-size: clamp(1.2rem, 3.5vw, 2.2rem);
       font-weight: 300;
       color: #ffb3d1;
       text-shadow: 0 0 15px #ff3388;
+      margin-bottom: 0.5rem;
     }
-    .overlay p {
-      font-size: 1.3rem;
-      max-width: 600px;
-      line-height: 1.8;
-      color: #d4d4f7;
+    .overlay .subtitulo {
+      font-size: clamp(1.2rem, 3vw, 1.8rem);
+      color: #f0c0d0;
+      line-height: 1.4;
     }
     .btn {
       background: linear-gradient(145deg, #ff3388, #cc0055);
       border: none;
       color: white;
-      font-size: 1.8rem;
+      font-size: clamp(1.2rem, 2.5vw, 1.8rem);
       font-weight: bold;
-      padding: 16px 48px;
-      margin-top: 30px;
+      padding: 14px 40px;
+      margin-top: 25px;
       border-radius: 60px;
       box-shadow: 0 0 30px #ff3388aa, 0 8px 0 #880033;
       cursor: pointer;
@@ -75,22 +76,24 @@
       letter-spacing: 2px;
       border: 1px solid #ff88bb;
       touch-action: manipulation;
+      min-width: 160px;
     }
     .btn:active {
       transform: translateY(6px);
       box-shadow: 0 0 30px #ff3388aa, 0 2px 0 #880033;
     }
     .btn-small {
-      font-size: 1.4rem;
-      padding: 12px 32px;
+      font-size: clamp(1rem, 2vw, 1.4rem);
+      padding: 10px 28px;
+      min-width: 120px;
     }
     .btn-no {
       background: #445566;
       box-shadow: 0 0 20px #334466, 0 6px 0 #1f2a3a;
       border-color: #7788aa;
       transition: all 0.2s ease;
-      font-size: 1.6rem;
-      padding: 14px 36px;
+      font-size: clamp(1rem, 2vw, 1.6rem);
+      padding: 12px 30px;
       transform: scale(1);
     }
     .btn-no:active {
@@ -99,15 +102,16 @@
 
     /* Pantalla del mensaje especial */
     #mensajeEspecial {
-      font-size: 1.2rem;
-      line-height: 2.2;
-      max-width: 700px;
-      padding: 2rem;
+      font-size: clamp(0.9rem, 1.8vw, 1.3rem);
+      line-height: 2;
+      max-width: 750px;
+      padding: 1.5rem 2rem;
       color: #e8d0e0;
-      text-shadow: 0 0 30px rgba(255, 51, 136, 0.3);
+      text-shadow: 0 0 30px rgba(255, 51, 136, 0.2);
       opacity: 0;
       transform: translateY(30px);
       transition: all 1.2s ease;
+      text-align: center;
     }
     #mensajeEspecial.visible {
       opacity: 1;
@@ -121,13 +125,13 @@
     #mensajeEspecial .tolazon {
       color: #ff88bb;
       font-style: italic;
-      font-size: 1.4rem;
+      font-size: clamp(1.1rem, 2.2vw, 1.5rem);
       display: inline-block;
       animation: latido 1.5s ease-in-out infinite;
     }
     @keyframes latido {
       0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.1); }
+      50% { transform: scale(1.08); }
     }
     .texto-animado {
       display: inline-block;
@@ -135,43 +139,52 @@
       animation: aparecer 0.8s ease forwards;
     }
     .texto-animado:nth-child(1) { animation-delay: 0.1s; }
-    .texto-animado:nth-child(2) { animation-delay: 0.3s; }
-    .texto-animado:nth-child(3) { animation-delay: 0.5s; }
-    .texto-animado:nth-child(4) { animation-delay: 0.7s; }
-    .texto-animado:nth-child(5) { animation-delay: 0.9s; }
-    .texto-animado:nth-child(6) { animation-delay: 1.1s; }
-    .texto-animado:nth-child(7) { animation-delay: 1.3s; }
-    .texto-animado:nth-child(8) { animation-delay: 1.5s; }
-    .texto-animado:nth-child(9) { animation-delay: 1.7s; }
-    .texto-animado:nth-child(10) { animation-delay: 1.9s; }
-    .texto-animado:nth-child(11) { animation-delay: 2.1s; }
-    .texto-animado:nth-child(12) { animation-delay: 2.3s; }
-    .texto-animado:nth-child(13) { animation-delay: 2.5s; }
-    .texto-animado:nth-child(14) { animation-delay: 2.7s; }
-    .texto-animado:nth-child(15) { animation-delay: 2.9s; }
-    .texto-animado:nth-child(16) { animation-delay: 3.1s; }
-    .texto-animado:nth-child(17) { animation-delay: 3.3s; }
-    .texto-animado:nth-child(18) { animation-delay: 3.5s; }
+    .texto-animado:nth-child(2) { animation-delay: 0.25s; }
+    .texto-animado:nth-child(3) { animation-delay: 0.4s; }
+    .texto-animado:nth-child(4) { animation-delay: 0.55s; }
+    .texto-animado:nth-child(5) { animation-delay: 0.7s; }
+    .texto-animado:nth-child(6) { animation-delay: 0.85s; }
+    .texto-animado:nth-child(7) { animation-delay: 1.0s; }
+    .texto-animado:nth-child(8) { animation-delay: 1.15s; }
+    .texto-animado:nth-child(9) { animation-delay: 1.3s; }
+    .texto-animado:nth-child(10) { animation-delay: 1.45s; }
+    .texto-animado:nth-child(11) { animation-delay: 1.6s; }
+    .texto-animado:nth-child(12) { animation-delay: 1.75s; }
+    .texto-animado:nth-child(13) { animation-delay: 1.9s; }
+    .texto-animado:nth-child(14) { animation-delay: 2.05s; }
+    .texto-animado:nth-child(15) { animation-delay: 2.2s; }
+    .texto-animado:nth-child(16) { animation-delay: 2.35s; }
+    .texto-animado:nth-child(17) { animation-delay: 2.5s; }
+    .texto-animado:nth-child(18) { animation-delay: 2.65s; }
     
     @keyframes aparecer {
-      0% { opacity: 0; transform: translateY(15px); }
+      0% { opacity: 0; transform: translateY(12px); }
       100% { opacity: 1; transform: translateY(0); }
     }
 
     /* Pantalla de pregunta final */
     .pregunta-box {
-      background: rgba(0,0,0,0.5);
-      padding: 30px 40px;
+      background: rgba(0,0,0,0.55);
+      padding: clamp(20px, 4vw, 40px) clamp(24px, 5vw, 50px);
       border-radius: 40px;
       border: 2px solid #ff88bb;
-      max-width: 500px;
-      width: 90%;
+      max-width: 520px;
+      width: 92%;
+      backdrop-filter: blur(4px);
     }
     .pregunta-box p {
-      font-size: 2rem;
+      font-size: clamp(1.4rem, 3.5vw, 2.2rem);
       margin-bottom: 10px;
       color: #ffb3d1;
       text-shadow: 0 0 20px #ff3388;
+      line-height: 1.3;
+    }
+    .pregunta-box .botones {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      margin-top: 18px;
+      flex-wrap: wrap;
     }
     .btn-si-final {
       background: #ff3388;
@@ -192,7 +205,7 @@
       z-index: 5;
       display: none;
       opacity: 0;
-      transition: opacity 1.5s ease;
+      transition: opacity 1.8s ease;
     }
     #heart-container.visible {
       opacity: 1;
@@ -216,13 +229,100 @@
       pointer-events: all;
     }
 
+    /* Estilos para el poema en 3D (se inyectan desde JS) */
+    .controls-hint {
+      position: absolute;
+      bottom: 20px;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      color: rgba(255, 255, 255, 0.15);
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: clamp(10px, 1.2vw, 14px);
+      pointer-events: none;
+      letter-spacing: 2px;
+      z-index: 10;
+      text-shadow: 0 0 20px rgba(0,0,0,0.9);
+    }
+    .poem {
+      position: absolute;
+      bottom: 25px;
+      right: clamp(15px, 3vw, 35px);
+      color: rgba(255, 255, 255, 0.65);
+      font-family: 'Georgia', 'Times New Roman', serif;
+      font-size: clamp(12px, 1.4vw, 16px);
+      font-style: italic;
+      text-align: right;
+      pointer-events: none;
+      z-index: 10;
+      text-shadow: 0 0 30px rgba(0,0,0,0.9);
+      line-height: 1.7;
+      letter-spacing: 0.5px;
+      background: rgba(0,0,0,0.35);
+      padding: clamp(10px, 1.5vw, 18px) clamp(14px, 2vw, 24px);
+      border-radius: 12px;
+      backdrop-filter: blur(6px);
+      border-left: 2px solid rgba(255, 107, 157, 0.25);
+      max-width: 280px;
+    }
+    .poem .heart-emoji {
+      color: #ff6b9d;
+      display: inline-block;
+      animation: heartbeat 1.5s ease-in-out infinite;
+      font-size: clamp(14px, 1.6vw, 20px);
+    }
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+
+    /* Ajustes para móvil */
     @media (max-width: 600px) {
-      .overlay h1 { font-size: 2.2rem; }
-      .overlay h2 { font-size: 1.6rem; }
-      .btn { font-size: 1.4rem; padding: 14px 30px; }
-      #mensajeEspecial { font-size: 1rem; padding: 1rem; }
-      .pregunta-box { padding: 20px; }
-      .pregunta-box p { font-size: 1.5rem; }
+      .overlay { padding: 1rem; }
+      .overlay h1 { font-size: clamp(1.8rem, 7vw, 2.4rem); }
+      .overlay h2 { font-size: clamp(1rem, 4vw, 1.6rem); }
+      .overlay .subtitulo { font-size: clamp(1rem, 3.5vw, 1.4rem); }
+      .btn { 
+        font-size: clamp(1rem, 3.5vw, 1.3rem); 
+        padding: 12px 30px;
+        min-width: 130px;
+      }
+      #mensajeEspecial { 
+        font-size: clamp(0.8rem, 2.5vw, 1rem); 
+        padding: 1rem;
+        line-height: 1.9;
+        max-width: 100%;
+      }
+      .pregunta-box { padding: 18px 20px; }
+      .pregunta-box p { font-size: clamp(1.2rem, 5vw, 1.6rem); }
+      .pregunta-box .botones { gap: 12px; }
+      .btn-small { 
+        font-size: clamp(0.9rem, 3vw, 1.1rem); 
+        padding: 8px 20px;
+        min-width: 90px;
+      }
+      .poem {
+        bottom: 70px;
+        right: 12px;
+        font-size: clamp(10px, 2.5vw, 13px);
+        padding: 10px 14px;
+        max-width: 200px;
+        border-left-width: 2px;
+      }
+      .controls-hint {
+        bottom: 12px;
+        font-size: clamp(8px, 2vw, 11px);
+      }
+    }
+    @media (max-width: 400px) {
+      .poem {
+        max-width: 160px;
+        font-size: 10px;
+        padding: 8px 12px;
+        bottom: 60px;
+        right: 8px;
+      }
+      .pregunta-box p { font-size: 1.1rem; }
     }
   </style>
 </head>
@@ -232,7 +332,7 @@
   <div id="welcomeScreen" class="overlay">
     <h1>🌟 Hosla Muchacha guapa 🌟</h1>
     <h2>✨ Para la chica que me gusta ✨</h2>
-    <p style="font-size:1.8rem; color:#f0c0d0;">💖 primer regalo para tu 💖</p>
+    <p class="subtitulo">💖 primer regalo para tu 💖</p>
     <button id="btnSiguiente" class="btn">Siguiente ➜</button>
   </div>
 
@@ -267,7 +367,7 @@
   <div id="preguntaScreen" class="overlay hidden">
     <div class="pregunta-box">
       <p>🐣 ¿Quieres ver mi corazón de pollito? 🐣</p>
-      <div style="display:flex; gap:20px; justify-content:center; margin-top:20px; flex-wrap:wrap;">
+      <div class="botones">
         <button id="btnSiFinal" class="btn btn-small btn-si-final">Sí 💖</button>
         <button id="btnNoFinal" class="btn btn-small btn-no-final">No 😅</button>
       </div>
@@ -319,8 +419,8 @@
       mensajeScreen.classList.add('hidden');
       preguntaScreen.classList.remove('hidden');
       btnNoFinal.style.transform = 'scale(1)';
-      btnNoFinal.style.fontSize = '1.6rem';
-      btnNoFinal.style.padding = '14px 36px';
+      btnNoFinal.style.fontSize = '';
+      btnNoFinal.style.padding = '';
       btnNoFinal.style.display = 'inline-block';
       btnNoFinal.disabled = false;
       btnSiFinal.disabled = false;
@@ -336,11 +436,9 @@
     // Pregunta final
     btnSiFinal.addEventListener('click', () => {
       preguntaScreen.classList.add('hidden');
-      // Activar transición
       transicionOverlay.classList.add('active');
       setTimeout(() => {
         mostrarCorazonNebulosa();
-        // Desactivar overlay después de que el corazón aparezca
         setTimeout(() => {
           transicionOverlay.classList.remove('active');
         }, 1500);
@@ -352,8 +450,8 @@
       if (scale > 0.1) {
         scale = Math.max(0.05, scale - 0.2);
         btnNoFinal.style.transform = `scale(${scale})`;
-        btnNoFinal.style.fontSize = `${Math.max(0.5, 1.6 * scale)}rem`;
-        btnNoFinal.style.padding = `${Math.max(4, 14 * scale)}px ${Math.max(8, 36 * scale)}px`;
+        btnNoFinal.style.fontSize = `${Math.max(0.5, 1.2 * scale)}rem`;
+        btnNoFinal.style.padding = `${Math.max(4, 10 * scale)}px ${Math.max(8, 24 * scale)}px`;
         if (scale <= 0.1) {
           btnNoFinal.style.display = 'none';
           btnNoFinal.disabled = true;
@@ -368,7 +466,6 @@
     // 2. CORAZÓN DE NEBULOSA DANZANTE
     // ============================================================
     function mostrarCorazonNebulosa() {
-      // Si ya está inicializado, solo mostrar con fade
       if (window.heartInitialized) {
         heartContainer.style.display = 'block';
         setTimeout(() => {
@@ -379,18 +476,15 @@
 
       heartContainer.style.display = 'block';
       
-      // Pequeño delay para que el fade sea más suave
       setTimeout(() => {
         heartContainer.classList.add('visible');
       }, 100);
 
-      // ---------- INICIALIZACIÓN ----------
       const scene = new THREE.Scene();
       scene.background = new THREE.Color(0x000005);
 
-      // Cámara más lejana (distancia 35 en lugar de 20)
       const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-      camera.position.set(0, 0, 35);
+      camera.position.set(0, 0, 60);
       camera.lookAt(0, 0, 0);
 
       const renderer = new THREE.WebGLRenderer({ 
@@ -401,7 +495,7 @@
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       heartContainer.appendChild(renderer.domElement);
 
-      // Mostrar controles y poema
+      // Controles y poema (se inyectan con estilos ya definidos en CSS)
       const controlsHint = document.createElement('div');
       controlsHint.className = 'controls-hint';
       controlsHint.textContent = '🖱️ ARRASTRA PARA GIRAR · SCROLL PARA ZOOM';
@@ -415,55 +509,6 @@
         y cada que la veía
       `;
       heartContainer.appendChild(poemDiv);
-
-      // Agregar estilos para los nuevos elementos
-      const style = document.createElement('style');
-      style.textContent = `
-        .controls-hint {
-          position: absolute;
-          bottom: 30px;
-          left: 0;
-          width: 100%;
-          text-align: center;
-          color: rgba(255, 255, 255, 0.2);
-          font-family: 'Arial', sans-serif;
-          font-size: 12px;
-          pointer-events: none;
-          letter-spacing: 2px;
-          z-index: 10;
-          text-shadow: 0 0 20px rgba(0,0,0,0.9);
-        }
-        .poem {
-          position: absolute;
-          bottom: 30px;
-          right: 30px;
-          color: rgba(255, 255, 255, 0.6);
-          font-family: 'Georgia', serif;
-          font-size: 14px;
-          font-style: italic;
-          text-align: right;
-          pointer-events: none;
-          z-index: 10;
-          text-shadow: 0 0 30px rgba(0,0,0,0.9);
-          line-height: 1.6;
-          letter-spacing: 1px;
-          background: rgba(0,0,0,0.3);
-          padding: 15px 20px;
-          border-radius: 10px;
-          backdrop-filter: blur(5px);
-          border-left: 2px solid rgba(255, 107, 157, 0.3);
-        }
-        .poem .heart-emoji {
-          color: #ff6b9d;
-          display: inline-block;
-          animation: heartbeat 1.5s ease-in-out infinite;
-        }
-        @keyframes heartbeat {
-          0%, 100% { transform: scale(1); }
-          50% { transform: scale(1.2); }
-        }
-      `;
-      heartContainer.appendChild(style);
 
       const controls = new OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
@@ -897,20 +942,16 @@
         
         time += 0.01;
         
-        // 1. MOVIMIENTO DE ESTRELLAS
         starField.rotation.y += 0.0002;
         starField.rotation.x += 0.0001;
         
-        // 2. ROTACIÓN DEL CORAZÓN
         heartGroup.rotation.y += 0.003;
         heartGroup.rotation.x += 0.0008;
         heartGroup.rotation.z += 0.0004;
         
-        // 3. RESPIRACIÓN DEL CORAZÓN
         const breath = 1 + 0.02 * Math.sin(time * 0.5);
         heartGroup.scale.set(breath, breath, breath);
         
-        // 4. CAMBIO DE COLOR
         colorTransition += 0.0025;
         
         if (colorTransition >= 1) {
@@ -945,7 +986,6 @@
         }
         heart.geometry.attributes.color.needsUpdate = true;
         
-        // 5. NEBULOSA DANZANTE
         const nebulaPos = nebulaGeometry.attributes.position.array;
         for (let i = 0; i < NEBULA_PARTICLES; i++) {
           const data = nebulaData[i];
@@ -967,7 +1007,6 @@
         nebulaGroup.rotation.y += 0.0008;
         nebulaGroup.rotation.x += 0.0004;
         
-        // 6. PARTÍCULAS DE RESPIRACIÓN
         const breathPositions = breathParticlesMesh.geometry.attributes.position.array;
         for (let i = 0; i < breathPositions.length; i += 3) {
           const x = breathPositions[i];
@@ -986,7 +1025,6 @@
         }
         breathParticlesMesh.geometry.attributes.position.needsUpdate = true;
         
-        // 7. ESTRELLAS CENTELLEANTES
         const twinklePositions = twinkleStarsMesh.geometry.attributes.position.array;
         for (let i = 0; i < twinklePositions.length; i += 3) {
           const x = twinklePositions[i];
@@ -1006,7 +1044,6 @@
         
         twinkleStarsMesh.material.opacity = 0.6 + 0.3 * Math.sin(time * 0.5);
         
-        // 8. ANILLOS DE LUZ
         rings.forEach((ring, index) => {
           ring.rotation.y += 0.004 * (index + 1);
           ring.rotation.x += 0.003 * (index + 1);
@@ -1036,7 +1073,7 @@
       window.heartInitialized = true;
     }
 
-    console.log('❤️ Corazón de Nebulosa Danzante - Con transición suave');
+    console.log('❤️ Corazón de Nebulosa Danzante - Textos optimizados');
   </script>
 </body>
 </html>
