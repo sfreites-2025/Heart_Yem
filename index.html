@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Galaxia · Tetris · Corazón</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            overflow: hidden;
+            background: #000000;
+            height: 100vh;
+            width: 100vw;
+            touch-action: none;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
+        /* Pantallas overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at center, #0b0b2a, #03030a);
+            z-index: 20;
+            transition: opacity 0.6s ease;
+            text-align: center;
+            padding: 1.5rem;
+            box-sizing: border-box;
+        }
+        .overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .overlay h1 {
+            font-size: 3.2rem;
+            text-shadow: 0 0 20px #ff4d94, 0 0 40px #ff1a66;
+            margin-bottom: 0.5rem;
+            letter-spacing: 2px;
+        }
+        .overlay h2 {
+            font-size: 2.2rem;
+            font-weight: 300;
+            color: #ffb3d1;
+            text-shadow: 0 0 15px #ff3388;
+        }
+        .overlay p {
+            font-size: 1.3rem;
+            max-width: 600px;
+            line-height: 1.6;
+            color: #d4d4f7;
+        }
+        .btn {
+            background: linear-gradient(145deg, #ff3388, #cc0055);
+            border: none;
+            color: white;
+            font-size: 1.8rem;
+            font-weight: bold;
+            padding: 16px 48px;
+            margin-top: 30px;
+            border-radius: 60px;
+            box-shadow: 0 0 30px #ff3388aa, 0 8px 0 #880033;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            letter-spacing: 2px;
+            border: 1px solid #ff88bb;
+            touch-action: manipulation;
+        }
+        .btn:active {
+            transform: translateY(6px);
+            box-shadow: 0 0 30px #ff3388aa, 0 2px 0 #880033;
+        }
+        .btn-small {
+            font-size: 1.4rem;
+            padding: 12px 32px;
+        }
+        .btn-no {
+            background: #445566;
+            box-shadow: 0 0 20px #334466, 0 6px 0 #1f2a3a;
+            border-color: #7788aa;
+            transition: all 0.2s ease;
+            font-size: 1.6rem;
+            padding: 14px 36px;
+            transform: scale(1);
+        }
+        .btn-no:active {
+            transform: translateY(4px) scale(0.95);
+        }
+
+        /* Contenedor del juego Tetris */
+        #gameContainer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.75);
+            padding: 20px 25px;
+            border-radius: 30px;
+            backdrop-filter: blur(8px);
+            border: 2px solid #ff66aa;
+            max-width: 420px;
+            width: 92%;
+        }
+        #tetrisCanvas {
+            background: #111;
+            border-radius: 12px;
+            border: 2px solid #ff88bb;
+            width: 100%;
+            max-width: 300px;
+            aspect-ratio: 10 / 20;
+            display: block;
+            image-rendering: pixelated;
+        }
+        .game-controls {
+            display: flex;
+            gap: 12px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .game-btn {
+            background: #3366aa;
+            border: none;
+            color: white;
+            font-size: 1.3rem;
+            padding: 8px 20px;
+            border-radius: 30px;
+            box-shadow: 0 4px 0 #1a3a6a;
+            cursor: pointer;
+            font-weight: bold;
+            min-width: 60px;
+            transition: 0.1s;
+            touch-action: manipulation;
+        }
+        .game-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 0px 0 #1a3a6a;
+        }
+        #gameStatus {
+            font-size: 1.2rem;
+            min-height: 2.5rem;
+            margin: 6px 0;
+            color: #ffb3d1;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 6px 18px;
+            border-radius: 30px;
+            border: 1px solid #ff88bb;
+            width: 100%;
+        }
+        #preguntaFinal {
+            font-size: 1.5rem;
+            margin-top: 12px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 12px 20px;
+            border-radius: 40px;
+            border: 2px solid #ff88bb;
+            width: 100%;
+        }
+        .btn-si-final {
+            background: #ff3388;
+            box-shadow: 0 0 30px #ff3388aa, 0 6px 0 #880033;
+        }
+        .btn-no-final {
+            background: #445566;
+            box-shadow: 0 0 20px #334466, 0 6px 0 #1f2a3a;
+        }
+
+        /* Canvas 3D */
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 5;
+        }
+
+        @media (max-width: 600px) {
+            .overlay h1 { font-size: 2.2rem; }
+            .overlay h2 { font-size: 1.6rem; }
+            .btn { font-size: 1.4rem; padding: 14px 30px; }
+            #gameContainer { padding: 15px; }
+            .game-btn { font-size: 1.0rem; padding: 6px 14px; min-width: 50px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Pantalla 1: Bienvenida -->
+    <div id="welcomeScreen" class="overlay">
+        <h1>🌟 Hosla Muchacha guapa 🌟</h1>
+        <h2>✨ Para la chica que me gusta ✨</h2>
+        <p style="font-size:1.8rem; color:#f0c0d0;">💖 primer regalo para tu 💖</p>
+        <button id="btnSiguiente" class="btn">Siguiente ➜</button>
+    </div>
+
+    <!-- Pantalla 2: Tetris -->
+    <div id="gameScreen" class="overlay hidden">
+        <div id="gameContainer">
+            <h2 style="margin:0 0 4px 0; font-size:1.7rem;">🧩 Tetris 🧩</h2>
+            <p style="margin:0 0 6px 0; font-size:0.85rem; opacity:0.8;">Gana 1 partida o juega 3 veces para continuar</p>
+            <canvas id="tetrisCanvas" width="200" height="400"></canvas>
+            <div id="gameStatus">▶️ Presiona "Iniciar"</div>
+            <div class="game-controls">
+                <button id="btnIzquierda" class="game-btn">◀</button>
+                <button id="btnDerecha" class="game-btn">▶</button>
+                <button id="btnRotar" class="game-btn">↻</button>
+                <button id="btnAbajo" class="game-btn">▼</button>
+                <button id="btnIniciar" class="game-btn" style="background:#33aa66; box-shadow:0 4px 0 #1f6a3a;">Iniciar</button>
+                <button id="btnReiniciar" class="game-btn" style="background:#aa6644; box-shadow:0 4px 0 #6a3f2a;">Reiniciar</button>
+            </div>
+            <!-- Pregunta final -->
+            <div id="preguntaFinal" style="display:none;">
+                <p style="margin:5px 0;">🐣 ¿Quieres ver mi corazón de pollito? 🐣</p>
+                <div style="display:flex; gap:16px; justify-content:center; margin-top:8px; flex-wrap:wrap;">
+                    <button id="btnSiFinal" class="btn btn-small btn-si-final">Sí 💖</button>
+                    <button id="btnNoFinal" class="btn btn-small btn-no-final">No 😅</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenedor 3D (corazón) -->
+    <div id="canvas-container"></div>
+
+    <!-- Script principal -->
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+        // -------- ELEMENTOS DOM --------
+        const welcomeScreen = document.getElementById('welcomeScreen');
+        const gameScreen = document.getElementById('gameScreen');
+        const btnSiguiente = document.getElementById('btnSiguiente');
+        const container = document.getElementById('canvas-container');
+
+        const canvas = document.getElementById('tetrisCanvas');
+        const ctx = canvas.getContext('2d');
+        const gameStatus = document.getElementById('gameStatus');
+        const preguntaFinal = document.getElementById('preguntaFinal');
+        const btnSiFinal = document.getElementById('btnSiFinal');
+        const btnNoFinal = document.getElementById('btnNoFinal');
+
+        // Botones Tetris
+        const btnIzq = document.getElementById('btnIzquierda');
+        const btnDer = document.getElementById('btnDerecha');
+        const btnRot = document.getElementById('btnRotar');
+        const btnAbajo = document.getElementById('btnAbajo');
+        const btnIniciar = document.getElementById('btnIniciar');
+        const btnReiniciar = document.getElementById('btnReiniciar');
+
+        // -------- FUNCIÓN PARA AVANZAR --------
+        function avanzarAJuego() {
+            welcomeScreen.classList.add('hidden');
+            gameScreen.classList.remove('hidden');
+            resetGame();
+        }
+
+        // Evento del botón Siguiente (CORREGIDO)
+        btnSiguiente.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('Botón Siguiente presionado');
+            avanzarAJuego();
+        });
+
+        // También con touch para móvil
+        btnSiguiente.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            console.log('Botón Siguiente touch');
+            avanzarAJuego();
+        });
+
+        // -------- TETRIS --------
+        const COLS = 10, ROWS = 20;
+        const BLOCK_SIZE = 20;
+        let board = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
+        let currentPiece = null;
+        let gameInterval = null;
+        let gameRunning = false;
+        let gameOver = false;
+        let partidasJugadas = 0;
+        let victorias = 0;
+        let juegoTerminado = false; // para la pregunta
+
+        // Piezas
+        const PIECES = [
+            { shape: [[1,1,1,1]], color: '#00f0f0' }, // I
+            { shape: [[1,1],[1,1]], color: '#f0f000' }, // O
+            { shape: [[0,1,0],[1,1,1]], color: '#a000f0' }, // T
+            { shape: [[1,0,0],[1,1,1]], color: '#f0a000' }, // L
+            { shape: [[0,0,1],[1,1,1]], color: '#0000f0' }, // J
+            { shape: [[0,1,1],[1,1,0]], color: '#00f000' }, // S
+            { shape: [[1,1,0],[0,1,1]], color: '#f00000' }  // Z
+        ];
+
+        function randomPiece() {
+            const p = PIECES[Math.floor(Math.random() * PIECES.length)];
+            return {
+                shape: p.shape.map(row => [...row]),
+                color: p.color,
+                x: Math.floor((COLS - p.shape[0].length) / 2),
+                y: 0
+            };
+        }
+
+        function rotatePiece(piece) {
+            const shape = piece.shape;
+            const rotated = shape[0].map((_, idx) => shape.map(row => row[idx]).reverse());
+            return { ...piece, shape: rotated };
+        }
+
+        function isValid(shape, offX, offY) {
+            for (let r = 0; r < shape.length; r++) {
+                for (let c = 0; c < shape[0].length; c++) {
+                    if (shape[r][c]) {
+                        const x = offX + c, y = offY + r;
+                        if (x < 0 || x >= COLS || y >= ROWS || y < 0) return false;
+                        if (y >= 0 && board[y][x]) return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        function lockPiece() {
+            if (!currentPiece) return;
+            const { shape, x, y, color } = currentPiece;
+            for (let r = 0; r < shape.length; r++) {
+                for (let c = 0; c < shape[0].length; c++) {
+                    if (shape[r][c]) {
+                        const boardY = y + r;
+                        if (boardY < 0) {
+                            gameOver = true;
+                            gameRunning = false;
+                            clearInterval(gameInterval);
+                            gameStatus.textContent = '💥 Game Over. Reinicia';
+                            return;
+                        }
+                        board[boardY][x + c] = color;
+                    }
+                }
+            }
+            clearLines();
+            currentPiece = randomPiece();
+            if (!isValid(currentPiece.shape, currentPiece.x, currentPiece.y)) {
+                gameOver = true;
+                gameRunning = false;
+                clearInterval(gameInterval);
+                gameStatus.textContent = '💥 Game Over. Reinicia';
+            }
+        }
+
+        function clearLines() {
+            let cleared = 0;
+            for (let r = ROWS - 1; r >= 0; ) {
+                if (board[r].every(cell => cell !== 0)) {
+                    board.splice(r, 1);
+                    board.unshift(Array(COLS).fill(0));
+                    cleared++;
+                } else {
+                    r--;
+                }
+            }
+            if (cleared > 0) {
+                victorias++;
+                if (victorias >= 1 && !juegoTerminado) {
+                    gameRunning = false;
+                    clearInterval(gameInterval);
+                    juegoTerminado = true;
+                    gameStatus.textContent = '🎉 ¡Ganaste! ¡Muy bien!';
+                    mostrarPreguntaFinal();
+                }
+            }
+        }
+
+        function moveDown() {
+            if (!gameRunning || gameOver || juegoTerminado) return;
+            if (isValid(currentPiece.shape, currentPiece.x, currentPiece.y + 1)) {
+                currentPiece.y++;
+            } else {
+                lockPiece();
+                if (gameOver) {
+                    gameRunning = false;
+                    clearInterval(gameInterval);
+                    gameStatus.textContent = '💥 Game Over. Reinicia';
+                }
+            }
+            drawBoard();
+        }
+
+        function moveHorizontal(dx) {
+            if (!gameRunning || gameOver || juegoTerminado || !currentPiece) return;
+            if (isValid(currentPiece.shape, currentPiece.x + dx, currentPiece.y)) {
+                currentPiece.x += dx;
+                drawBoard();
+            }
+        }
+
+        function rotateCurrent() {
+            if (!gameRunning || gameOver || juegoTerminado || !currentPiece) return;
+            const rotated = rotatePiece(currentPiece);
+            if (isValid(rotated.shape, rotated.x, rotated.y)) {
+                currentPiece.shape = rotated.shape;
+                drawBoard();
+            }
+        }
+
+        function drawBoard() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // Fondo
+            ctx.fillStyle = '#111';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            // Bloques fijos
+            for (let r = 0; r < ROWS; r++) {
+                for (let c = 0; c < COLS; c++) {
+                    if (board[r][c]) {
+                        ctx.fillStyle = board[r][c];
+                        ctx.fillRect(c * BLOCK_SIZE, r * BLOCK_SIZE, BLOCK_SIZE-1, BLOCK_SIZE-1);
+                    }
+                }
+            }
+            // Pieza actual
+            if (currentPiece && !gameOver) {
+                const { shape, x, y, color } = currentPiece;
+                for (let r = 0; r < shape.length; r++) {
+                    for (let c = 0; c < shape[0].length; c++) {
+                        if (shape[r][c]) {
+                            const boardY = y + r;
+                            if (boardY >= 0) {
+                                ctx.fillStyle = color;
+                                ctx.fillRect((x + c) * BLOCK_SIZE, boardY * BLOCK_SIZE, BLOCK_SIZE-1, BLOCK_SIZE-1);
+                            }
+                        }
+                    }
+                }
+            }
+            // Línea de fondo
+            ctx.strokeStyle = '#334';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function startGame() {
+            if (juegoTerminado) return;
+            if (gameInterval) clearInterval(gameInterval);
+            board = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
+            currentPiece = randomPiece();
+            gameOver = false;
+            gameRunning = true;
+            gameStatus.textContent = '🎮 Jugando...';
+            drawBoard();
+            gameInterval = setInterval(() => {
+                if (!gameOver && gameRunning && !juegoTerminado) {
+                    moveDown();
+                }
+            }, 400);
+        }
+
+        function resetGame() {
+            if (gameInterval) clearInterval(gameInterval);
+            board = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
+            currentPiece = null;
+            gameRunning = false;
+            gameOver = false;
+            partidasJugadas++;
+            // Si ya jugó 3 veces y no ganó, mostrar pregunta igual
+            if (partidasJugadas >= 3 && !juegoTerminado) {
+                juegoTerminado = true;
+                gameStatus.textContent = '🎮 ¡Jugaste 3 veces! Puedes continuar.';
+                mostrarPreguntaFinal();
+            } else {
+                gameStatus.textContent = `🔄 Reiniciado (${partidasJugadas}/3)`;
+            }
+            drawBoard();
+        }
+
+        function mostrarPreguntaFinal() {
+            preguntaFinal.style.display = 'block';
+            btnNoFinal.style.transform = 'scale(1)';
+            btnNoFinal.style.fontSize = '1.6rem';
+            btnNoFinal.style.padding = '14px 36px';
+            btnNoFinal.style.display = 'inline-block';
+            btnNoFinal.disabled = false;
+            btnSiFinal.disabled = false;
+        }
+
+        // -------- EVENTOS TETRIS --------
+        btnIniciar.addEventListener('click', startGame);
+        btnReiniciar.addEventListener('click', resetGame);
+        btnIzq.addEventListener('click', () => moveHorizontal(-1));
+        btnDer.addEventListener('click', () => moveHorizontal(1));
+        btnRot.addEventListener('click', rotateCurrent);
+        btnAbajo.addEventListener('click', moveDown);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') moveHorizontal(-1);
+            else if (e.key === 'ArrowRight') moveHorizontal(1);
+            else if (e.key === 'ArrowUp') rotateCurrent();
+            else if (e.key === 'ArrowDown') moveDown();
+            else if (e.key === ' ') { e.preventDefault(); startGame(); }
+        });
+
+        // -------- PREGUNTA FINAL --------
+        btnSiFinal.addEventListener('click', () => {
+            gameScreen.classList.add('hidden');
+            mostrarCorazon3D();
+        });
+
+        btnNoFinal.addEventListener('click', () => {
+            let scale = parseFloat(btnNoFinal.style.transform.replace('scale(', '').replace(')', '')) || 1;
+            if (scale > 0.1) {
+                scale = Math.max(0.05, scale - 0.2);
+                btnNoFinal.style.transform = `scale(${scale})`;
+                btnNoFinal.style.fontSize = `${Math.max(0.5, 1.6 * scale)}rem`;
+                btnNoFinal.style.padding = `${Math.max(4, 14 * scale)}px ${Math.max(8, 36 * scale)}px`;
+                if (scale <= 0.1) {
+                    btnNoFinal.style.display = 'none';
+                    btnNoFinal.disabled = true;
+                }
+            } else {
+                btnNoFinal.style.display = 'none';
+                btnNoFinal.disabled = true;
+            }
+        });
+
+        // -------- CORAZÓN 3D --------
+        function mostrarCorazon3D() {
+            if (window.sceneInicializada) {
+                container.style.display = 'block';
+                return;
+            }
+            // Inicializar escena 3D
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x000000);
+
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 100000);
+            camera.position.set(0, 0, 2500);
+            camera.lookAt(0, 0, 0);
+
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            container.appendChild(renderer.domElement);
+
+            const controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.autoRotate = false;
+            controls.enableZoom = true;
+            controls.target.set(0, 0, 0);
+
+            // --- Estrellas (galaxia) ---
+            const starCount = 18000;
+            const starGeo = new THREE.BufferGeometry();
+            const starPos = new Float32Array(starCount * 3);
+            const starCol = new Float32Array(starCount * 3);
+            for (let i = 0; i < starCount * 3; i += 3) {
+                const r = 800 + Math.random() * 6000;
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.acos((Math.random() * 2) - 1);
+                starPos[i] = r * Math.sin(phi) * Math.cos(theta);
+                starPos[i+1] = r * Math.sin(phi) * Math.sin(theta) * 0.6;
+                starPos[i+2] = r * Math.cos(phi);
+                const c = 0.5 + Math.random() * 0.5;
+                starCol[i] = c * 0.9;
+                starCol[i+1] = c * 0.8;
+                starCol[i+2] = c;
+            }
+            starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+            starGeo.setAttribute('color', new THREE.BufferAttribute(starCol, 3));
+            const starMat = new THREE.PointsMaterial({
+                size: 2.0,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.8,
+                blending: THREE.AdditiveBlending,
+                sizeAttenuation: true
+            });
+            const stars = new THREE.Points(starGeo, starMat);
+            scene.add(stars);
+
+            // --- Corazón (forma paramétrica) ---
+            function createHeartShape() {
+                const shape = new THREE.Shape();
+                const x = 0, y = 0;
+                shape.moveTo(x, y + 0.4);
+                shape.bezierCurveTo(x + 0.5, y + 0.8, x + 1.0, y + 0.2, x, y - 0.2);
+                shape.bezierCurveTo(x - 1.0, y + 0.2, x - 0.5, y + 0.8, x, y + 0.4);
+                return shape;
+            }
+
+            const heartShape = createHeartShape();
+            const extrudeSettings = {
+                steps: 2,
+                depth: 0.5,
+                bevelEnabled: true,
+                bevelThickness: 0.15,
+                bevelSize: 0.08,
+                bevelSegments: 12,
+            };
+            const geometry = new THREE.ExtrudeGeometry(heartShape, extrudeSettings);
+            geometry.computeBoundingBox();
+            const center = geometry.boundingBox.getCenter(new THREE.Vector3());
+            geometry.translate(-center.x, -center.y, -center.z);
+
+            const material = new THREE.MeshStandardMaterial({
+                color: 0xff3366,
+                emissive: 0xff3366,
+                emissiveIntensity: 0.6,
+                roughness: 0.2,
+                metalness: 0.1,
+            });
+            const heart = new THREE.Mesh(geometry, material);
+            heart.scale.set(80, 80, 80);
+            heart.position.set(0, 0, 0);
+            heart.rotation.x = Math.PI / 2;
+            heart.rotation.z = Math.PI;
+
+            // Corazón interior brillante
+            const innerMat = new THREE.MeshStandardMaterial({
+                color: 0xff88aa,
+                emissive: 0xff88aa,
+                emissiveIntensity: 0.9,
+                transparent: true,
+                opacity: 0.5,
+            });
+            const innerHeart = new THREE.Mesh(geometry, innerMat);
+            innerHeart.scale.set(50, 50, 50);
+            innerHeart.position.set(0, 0, 0);
+            innerHeart.rotation.x = Math.PI / 2;
+            innerHeart.rotation.z = Math.PI;
+
+            const group = new THREE.Group();
+            group.add(heart);
+            group.add(innerHeart);
+            scene.add(group);
+
+            // Luces
+            const ambient = new THREE.AmbientLight(0x404080);
+            scene.add(ambient);
+            const l1 = new THREE.PointLight(0xff88aa, 1.5, 3000);
+            l1.position.set(500, 500, 500);
+            scene.add(l1);
+            const l2 = new THREE.PointLight(0x88aaff, 1.0, 3000);
+            l2.position.set(-500, 300, 400);
+            scene.add(l2);
+
+            // Mensaje 3D (sprite)
+            const canvasMsg = document.createElement('canvas');
+            canvasMsg.width = 512;
+            canvasMsg.height = 128;
+            const ctxMsg = canvasMsg.getContext('2d');
+            ctxMsg.fillStyle = 'rgba(0,0,0,0)';
+            ctxMsg.fillRect(0, 0, 512, 128);
+            ctxMsg.font = 'bold 48px Arial';
+            ctxMsg.textAlign = 'center';
+            ctxMsg.textBaseline = 'middle';
+            ctxMsg.shadowColor = '#ff3388';
+            ctxMsg.shadowBlur = 30;
+            ctxMsg.fillStyle = '#ffb3d9';
+            ctxMsg.fillText('❤️ Este es mi corazón de pollito, es para ti ❤️', 256, 64);
+            const texture = new THREE.CanvasTexture(canvasMsg);
+            const spriteMat = new THREE.SpriteMaterial({
+                map: texture,
+                transparent: true,
+                depthWrite: false,
+            });
+            const sprite = new THREE.Sprite(spriteMat);
+            sprite.scale.set(600, 150, 1);
+            sprite.position.set(0, -180, 0);
+            scene.add(sprite);
+
+            // Animación
+            let time = 0;
+            function animate() {
+                requestAnimationFrame(animate);
+                time += 0.02;
+                const hue = Math.sin(time * 0.3) * 0.3 + 0.9;
+                const color = new THREE.Color().setHSL(hue % 1.0, 0.9, 0.6);
+                heart.material.color.set(color);
+                heart.material.emissive.set(color);
+                const pulse = 1 + Math.sin(time * 1.5) * 0.04;
+                group.scale.set(pulse, pulse, pulse);
+                stars.rotation.y += 0.00015;
+                controls.update();
+                renderer.render(scene, camera);
+            }
+            animate();
+
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+
+            window.sceneInicializada = true;
+            container.style.display = 'block';
+        }
+
+        console.log('✨ Página cargada. Botón Siguiente funcionando.');
+    </script>
+</body>
+</html>
